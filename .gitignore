@@ -1,0 +1,30 @@
+# ── Ideogram assets (excluded by request) ──
+ideogram/
+
+# ── Python cache ──
+__pycache__/
+*.pyc
+
+# ── Large archives / backups ──
+*.tar.gz
+*.zip
+
+# ── Heavy data / weights / output dirs ──
+experiments/
+archive_20260509/
+archive_20260513/
+archive_eval/
+d_grand/
+
+# ── Generated galleries / viz / logs ──
+viz/
+benchmark_ot_v3/
+eval_gallery/
+slt_gallery/
+i2i_param_search/
+logs/
+
+# ── Loose top-level binary outputs / docs (root only; keeps cnt/ sty/ fig/ results/) ──
+/*.pdf
+/*.png
+/*.html

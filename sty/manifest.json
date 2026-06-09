@@ -1,0 +1,322 @@
+[
+  {
+    "idx": 0,
+    "file": "00.png",
+    "style_id": "s4995",
+    "category": "abstract_fluid",
+    "description": "In the style of psychedelic pop art, vibrant cyan with glowing yellow and deep red in radial distribution, intense central light with surrounding halos, digital illustration, high-density halftone dots creating a textured, reflective surface, sharp, uniform dot patterns forming precise, geometric brushwork.",
+    "orig_size_kb": 65
+  },
+  {
+    "idx": 1,
+    "file": "01.png",
+    "style_id": "s47854",
+    "category": "abstract_geo",
+    "description": "In the style of geometric abstraction, bright yellow with thin black and green lines in concentric arrangement, evenly distributed light, print medium, flat matte texture, precise straight lines with sharp edges.",
+    "orig_size_kb": 48
+  },
+  {
+    "idx": 2,
+    "file": "02.png",
+    "style_id": "s164581",
+    "category": "anime_cel",
+    "description": "In the style of anime illustration, vibrant magenta and deep blue with fiery orange and golden hues in dynamic color distribution, radiant light emanating from central focal point, digital art medium, smooth layered textures with high reflectivity, clean sharp brushwork with precise edge hardness.",
+    "orig_size_kb": 40
+  },
+  {
+    "idx": 3,
+    "file": "03.png",
+    "style_id": "s167947",
+    "category": "art_deco",
+    "description": "In the style of Art Deco, warm golden hues with deep black and muted green in a radial distribution, dramatic chiaroscuro light, pastel medium, smooth and blended texture with subtle layering, soft-edged brushwork with varied stroke width and directional flow.",
+    "orig_size_kb": 48
+  },
+  {
+    "idx": 4,
+    "file": "04.png",
+    "style_id": "s24670",
+    "category": "art_nouveau",
+    "description": "In the style of Art Nouveau, warm gold and amber with earthy browns in a dense, symmetrical composition, ambient light with soft highlights, mosaic and relief carving medium, layered, smooth, and reflective texture, flowing, curvilinear forms with soft edges.",
+    "orig_size_kb": 50
+  },
+  {
+    "idx": 5,
+    "file": "05.png",
+    "style_id": "s80725",
+    "category": "blueprint",
+    "description": "In the style of technical drawing, black with white in high-contrast distribution, even light, ink on paper, smooth texture, precise linear brushwork.",
+    "orig_size_kb": 71
+  },
+  {
+    "idx": 6,
+    "file": "06.png",
+    "style_id": "s146975",
+    "category": "charcoal",
+    "description": "In the style of sketch illustration, monochromatic with grayscale tones in high-contrast distribution, directional light creating sharp highlights and deep shadows, ink or charcoal medium, textured with layered shading and dense cross-hatching, brushwork featuring varied stroke widths, directional lines, and hard-edged contours.",
+    "orig_size_kb": 60
+  },
+  {
+    "idx": 7,
+    "file": "07.png",
+    "style_id": "s84870",
+    "category": "children_book",
+    "description": "In the style of whimsical illustration, monochrome black with white highlights in high-contrast distribution, evenly lit, ink and paper medium, smooth texture with layered ink density, fine and consistent line work with sharp edges.",
+    "orig_size_kb": 36
+  },
+  {
+    "idx": 8,
+    "file": "08.png",
+    "style_id": "s60896",
+    "category": "chinese_ink",
+    "description": "In the style of traditional Chinese ink painting, monochromatic with subtle earth tones in soft distribution, diffused light, ink and wash on paper, layered texture with varied density and matte reflectivity, expressive brushwork with varied stroke width and length, directional lines, and soft edge transitions.",
+    "orig_size_kb": 39
+  },
+  {
+    "idx": 9,
+    "file": "09.png",
+    "style_id": "s148516",
+    "category": "clay_sculpt",
+    "description": "In the style of numismatic art, gold with metallic sheen in concentrated distribution, directional light, sculpted metal, high reflectivity and smooth surface, precise engraved lines.",
+    "orig_size_kb": 50
+  },
+  {
+    "idx": 10,
+    "file": "10.png",
+    "style_id": "s38586",
+    "category": "collage",
+    "description": "In the style of Expressionism, vibrant reds with yellows and blues in high-contrast distribution, dramatic directional light, mixed media with layered paint and ink, dense and rough texture, bold and varied brushwork with sharp edges and dynamic strokes.",
+    "orig_size_kb": 48
+  },
+  {
+    "idx": 11,
+    "file": "11.png",
+    "style_id": "s78500",
+    "category": "comic_book",
+    "description": "In the style of graphic novel illustration, bold yellow with black and white in high-contrast distribution, stark directional light, ink on paper, smooth with sharp edges, precise linear strokes.",
+    "orig_size_kb": 69
+  },
+  {
+    "idx": 12,
+    "file": "12.png",
+    "style_id": "s89276",
+    "category": "cyberpunk",
+    "description": "In the style of cyberpunk, dominant purples with neon greens and oranges in high-contrast distribution, scattered artificial light, digital illustration, layered and reflective surfaces, sharp and precise lines with hard edges.",
+    "orig_size_kb": 49
+  },
+  {
+    "idx": 13,
+    "file": "13.png",
+    "style_id": "s162835",
+    "category": "dark_fantasy",
+    "description": "In the style of gothic illustration, sepia with red accents in vertical alignment, dramatic chiaroscuro light, digital ink drawing, high-contrast texture with layered shading and grainy surface, precise fine-line brushwork with sharp edges.",
+    "orig_size_kb": 52
+  },
+  {
+    "idx": 14,
+    "file": "14.png",
+    "style_id": "s33632",
+    "category": "embroidery",
+    "description": "In the style of textile art, deep reds with ochre and navy in geometric distribution, evenly lit, woven fabric, dense and fringed texture, intricate linear patterns with sharp edges.",
+    "orig_size_kb": 62
+  },
+  {
+    "idx": 15,
+    "file": "15.png",
+    "style_id": "s136562",
+    "category": "fractal",
+    "description": "In the style of digital fractal art, vibrant teal and gold with deep black and fiery orange in concentric distribution, radiating light, digital rendering, intricate layered texture with high reflectivity, complex swirling patterns with sharp edge hardness.",
+    "orig_size_kb": 52
+  },
+  {
+    "idx": 16,
+    "file": "16.png",
+    "style_id": "s51402",
+    "category": "glass_blown",
+    "description": "In the style of contemporary installation art, vibrant orange and yellow with red and gold in a cascading distribution, radiant light, crystalline medium, dense reflective texture, uniform geometric layering.",
+    "orig_size_kb": 43
+  },
+  {
+    "idx": 17,
+    "file": "17.png",
+    "style_id": "s136860",
+    "category": "glitch",
+    "description": "In the style of digital glitch art, black with red and gold in high-contrast distribution, sharp light, digital rendering, layered and fragmented texture, geometric and linear brushwork.",
+    "orig_size_kb": 53
+  },
+  {
+    "idx": 18,
+    "file": "18.png",
+    "style_id": "s84774",
+    "category": "gouache",
+    "description": "In the style of pulp illustration, warm ochre with deep reds and teal in balanced distribution, bright frontal light, gouache on board, smooth with subtle layering, broad and directional brushwork with soft edges.",
+    "orig_size_kb": 42
+  },
+  {
+    "idx": 19,
+    "file": "19.png",
+    "style_id": "s23613",
+    "category": "graffiti",
+    "description": "In the style of digital graffiti, vibrant rainbow with black in concentrated bursts, high-contrast light, digital illustration, layered and dense texture, dynamic brushwork with varied stroke width and sharp edges.",
+    "orig_size_kb": 53
+  },
+  {
+    "idx": 20,
+    "file": "20.png",
+    "style_id": "s43918",
+    "category": "linocut",
+    "description": "In the style of woodcut print, black with white in high-contrast distribution, dramatic chiaroscuro light, linocut medium, bold engraved texture, sharp linear brushwork.",
+    "orig_size_kb": 68
+  },
+  {
+    "idx": 21,
+    "file": "21.png",
+    "style_id": "s124480",
+    "category": "low_poly",
+    "description": "In the style of digital art, deep blue and teal with gold in concentrated distribution, radiant light, digital rendering, faceted and reflective texture, sharp and geometric forms.",
+    "orig_size_kb": 39
+  },
+  {
+    "idx": 22,
+    "file": "22.png",
+    "style_id": "s167178",
+    "category": "manga_bw",
+    "description": "In the style of black-and-white manga illustration, monochromatic with grayscale tones in high-contrast distribution, dramatic chiaroscuro light, ink and digital rendering, sharp linework with dense cross-hatching and stippling, precise and varied stroke width and edge hardness.",
+    "orig_size_kb": 84
+  },
+  {
+    "idx": 23,
+    "file": "23.png",
+    "style_id": "s173456",
+    "category": "mosaic",
+    "description": "In the style of Byzantine mosaic, gold with blue and red in dominant vertical distribution, centralized light, mosaic tiles, textured with dense, reflective surface, geometric patterns with hard-edged, uniform tesserae.",
+    "orig_size_kb": 72
+  },
+  {
+    "idx": 24,
+    "file": "24.png",
+    "style_id": "s126603",
+    "category": "neon_glow",
+    "description": "In the style of digital abstract, vibrant metallic hues with neon accents in scattered distribution, dynamic directional light, digital rendering, complex layered density with high reflectivity, sharp geometric edges and precise linear forms.",
+    "orig_size_kb": 40
+  },
+  {
+    "idx": 25,
+    "file": "25.png",
+    "style_id": "s252",
+    "category": "noir",
+    "description": "In the style of 19th-century illustration, black with white highlights in high-contrast distribution, dramatic chiaroscuro light, ink on paper, fine cross-hatched texture, precise linear brushwork.",
+    "orig_size_kb": 65
+  },
+  {
+    "idx": 26,
+    "file": "26.png",
+    "style_id": "s33275",
+    "category": "oil_classical",
+    "description": "In the style of Northern Renaissance, monochromatic with grayscale tones in high-contrast distribution, directional light creating sharp highlights and deep shadows, drypoint print, fine linear texture with dense crosshatching and reflective sheen, precise linear strokes with hard edges and minimal blending.",
+    "orig_size_kb": 66
+  },
+  {
+    "idx": 27,
+    "file": "27.png",
+    "style_id": "s31620",
+    "category": "oil_impasto",
+    "description": "In the style of pop art, dominant yellow with orange and red in dense, overlapping distribution, bright and even light, acrylic paint on canvas, thick impasto texture with layered density, bold and varied brushwork with hard edges and expressive stroke shapes.",
+    "orig_size_kb": 52
+  },
+  {
+    "idx": 28,
+    "file": "28.png",
+    "style_id": "s59599",
+    "category": "pastel_dream",
+    "description": "In the style of Cubism, monochromatic with blue accents in geometric distribution, high-contrast light, pastel on board, granular texture with layered density, sharp-edged brushwork with directional strokes.",
+    "orig_size_kb": 41
+  },
+  {
+    "idx": 29,
+    "file": "29.png",
+    "style_id": "s147324",
+    "category": "pencil_sketch",
+    "description": "In the style of conceptual illustration, monochromatic with grayscale tones in high-contrast distribution, directional light creating sharp highlights and deep shadows, graphite pencil on paper, fine line work with layered hatching and dense cross-contouring, precise linear strokes with hard edges and minimal blending.",
+    "orig_size_kb": 48
+  },
+  {
+    "idx": 30,
+    "file": "30.png",
+    "style_id": "s39",
+    "category": "photorealism",
+    "description": "In the style of photorealistic printmaking, monochromatic with grayscale tones in high-contrast distribution, diffused light, etching or lithography medium, fine grainy texture with layered density, sharp linear strokes with varied length and directional precision.",
+    "orig_size_kb": 57
+  },
+  {
+    "idx": 31,
+    "file": "31.png",
+    "style_id": "s129256",
+    "category": "pixel_art",
+    "description": "In the style of pixel art, monochromatic metallic tones with warm gold and bronze highlights in clustered distribution, directional light creating high contrast, metal fasteners as artistic medium, dense reflective surface with layered depth, uniform circular patterns with sharp edges.",
+    "orig_size_kb": 42
+  },
+  {
+    "idx": 32,
+    "file": "32.png",
+    "style_id": "s167217",
+    "category": "pop_art",
+    "description": "In the style of retro comic book illustration, bold red with cream and black in high-contrast distribution, flat and even light, digital print, halftone dot texture, sharp hard-edged strokes with consistent width and directional lines.",
+    "orig_size_kb": 64
+  },
+  {
+    "idx": 33,
+    "file": "33.png",
+    "style_id": "s34377",
+    "category": "propaganda",
+    "description": "In the style of retro propaganda poster art, bold red, white, and blue with high-contrast saturation in radial distribution, bright and even light, digital illustration, distressed surface with peeling and splatter effects, sharp-edged blocky strokes with uniform width and hard edges.",
+    "orig_size_kb": 52
+  },
+  {
+    "idx": 34,
+    "file": "34.png",
+    "style_id": "s64948",
+    "category": "stained_glass",
+    "description": "In the style of stained glass, dominant yellow with blue and black in high-contrast distribution, bright and flat light, graphic illustration medium, sharp edges with dense layering, bold linear strokes with hard edges and uniform width.",
+    "orig_size_kb": 56
+  },
+  {
+    "idx": 35,
+    "file": "35.png",
+    "style_id": "s145768",
+    "category": "steampunk",
+    "description": "In the style of steampunk illustration, vibrant teal and golden yellow with deep blues in dynamic color distribution, dramatic directional light, digital painting, smooth reflective surfaces with layered depth, precise sharp-edged brushwork.",
+    "orig_size_kb": 42
+  },
+  {
+    "idx": 36,
+    "file": "36.png",
+    "style_id": "s167561",
+    "category": "tattoo",
+    "description": "In the style of black-and-white dotwork, monochromatic with stark contrast in color distribution, high-contrast light, tattoo art, dense stippling texture, fine uniform strokes with sharp edges.",
+    "orig_size_kb": 79
+  },
+  {
+    "idx": 37,
+    "file": "37.png",
+    "style_id": "s75142",
+    "category": "ukiyo_e",
+    "description": "In the style of ukiyo-e, black with white in high-contrast distribution, dramatic light, woodblock print, dense layered texture, bold linear brushwork with sharp edges and directional strokes.",
+    "orig_size_kb": 66
+  },
+  {
+    "idx": 38,
+    "file": "38.png",
+    "style_id": "s49660",
+    "category": "voxel",
+    "description": "In the style of low-poly digital art, warm yellow with vibrant green, red, and black in geometric distribution, bright and even light, digital rendering, faceted texture with layered polygons, sharp edge hardness and precise angular shapes.",
+    "orig_size_kb": 30
+  },
+  {
+    "idx": 39,
+    "file": "39.png",
+    "style_id": "s47145",
+    "category": "watercolor_loose",
+    "description": "In the style of Victorian illustration, warm golds with deep reds in balanced distribution, bright and even light, watercolor and ink, smooth with subtle layering, fine and precise brushwork.",
+    "orig_size_kb": 48
+  }
+]

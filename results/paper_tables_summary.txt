@@ -1,0 +1,120 @@
+======================================================================
+PAPER TABLES SUMMARY (Generated 2026-05-21)
+======================================================================
+
+All experiments use Klein 9B (FLUX.2), seed=43, 512×512, bf16
+Style set: sty/00~39 (exclude sty04), 39 styles total
+Ablation subset: ["00", "10", "14", "20", "27", "28", "33", "38"]
+
+----------------------------------------------------------------------
+TABLE 1: T2I Full Benchmark (39 styles × 6 prompts = 234/method)
+----------------------------------------------------------------------
+Method       CSD ↑    CLIP-T ↑   Time ↓
+hybrid2      0.6387   0.2757     6.4s *
+adam8         0.6069   0.2790     35.4s *
+
+* time_s in CSV is per-sample wall-clock during batch run (unreliable).
+  Use Timing Benchmark below for accurate comparison.
+
+----------------------------------------------------------------------
+TABLE 2: T2I Ablation (8 styles × 5 prompts = 40/method)
+----------------------------------------------------------------------
+Method       CSD ↑    CLIP-T ↑   Time ↓
+hybrid2      0.6442   0.2774     6.43s
+freq_off     0.6398   0.2786     11.09s
+adam8         0.6097   0.2828     29.55s
+softmax      0.5970   0.2845     8.75s
+no_slt       0.5458   0.2913     11.25s
+no_adam       0.2524   0.3106     3.84s
+
+----------------------------------------------------------------------
+TABLE 3: I2I Full Benchmark (hybrid2, 39 styles × 19 contents = 741)
+----------------------------------------------------------------------
+CSD mean:    0.6620
+CLIP-I mean: 0.6500
+Time mean:   ~8s/image
+N samples:   741
+
+----------------------------------------------------------------------
+TABLE 4: I2I Ablation (8 styles × ~5 contents)
+----------------------------------------------------------------------
+Method       CSD ↑    CLIP-I ↑   Time ↓
+hybrid2      0.6958   0.6633     8.4s
+adam8         0.6456   0.6993     32.2s
+softmax      0.6234   0.6930     6.4s
+no_slt       0.5794   0.7329     7.9s
+no_adam       0.3284   0.8305     3.3s
+
+----------------------------------------------------------------------
+TABLE 5: I2I Baselines
+----------------------------------------------------------------------
+Method       CSD ↑    CLIP-I ↑   Time ↓
+inject       0.1551   0.8631     3.3s
+text_only    0.1060   0.8680     2.6s
+
+----------------------------------------------------------------------
+TABLE 6: Iters Sweep (hybrid, SLT α=0.1, vary Adam iters)
+----------------------------------------------------------------------
+Iters   CSD ↑    CLIP-T ↑   Time ↓
+0       0.2524   0.3106     3.88s
+1       0.5388   0.2968     7.59s
+2       0.6360   0.2764     11.31s
+3       0.6723   0.2572     15.01s
+4       0.6823   0.2480     18.71s
+5       0.6941   0.2384     22.41s
+8       0.7132   0.2271     33.54s
+
+----------------------------------------------------------------------
+TABLE 7: SLT Alpha Sweep (SLT only, no Adam)
+----------------------------------------------------------------------
+Alpha   CSD ↑    CLIP-T ↑
+0.00    0.1169   0.3144
+0.02    0.1386   0.3139
+0.05    0.1778   0.3127
+0.10    0.2524   0.3106
+0.20    0.4097   0.3000
+0.30    0.5110   0.2778
+0.50    0.5265   0.1885
+
+----------------------------------------------------------------------
+TABLE 8: Adam-Only Sweep (no SLT, vary iters)
+----------------------------------------------------------------------
+Iters   CSD ↑    CLIP-T ↑   Time ↓
+1       0.3627   0.3076     7.57s
+2       0.5459   0.2931     11.27s
+3       0.6098   0.2730     15.00s
+4       0.6400   0.2623     17.94s
+5       0.6539   0.2552     12.70s
+8       0.6849   0.2374     19.00s
+
+----------------------------------------------------------------------
+TIMING BENCHMARK (独占GPU, warmup 3, measure 5, take median)
+----------------------------------------------------------------------
+Method                           Median (s)   Speedup vs Adam×8
+SLT only (α=0.1)                2.21         8.6x
+Hybrid (SLT + Adam×1)           4.32         4.4x
+Hybrid (SLT + Adam×2)           6.40         3.0x
+Hybrid (SLT + Adam×3)           8.51         2.2x
+Adam only ×2                    6.40         3.0x
+Adam only ×4                    10.59        1.8x
+Adam only ×8                    18.96        1.0x
+No style (baseline)             2.20         8.6x
+
+----------------------------------------------------------------------
+KEY FINDINGS
+----------------------------------------------------------------------
+1. Hybrid×2 achieves CSD 0.6442 in 6.40s — same quality as Adam×8
+   (CSD 0.6097) but 3x faster.
+
+2. SLT alone (α=0.1) costs nearly zero overhead (2.21s vs 2.20s baseline)
+   but provides CSD 0.25 color pre-alignment, enabling Adam to converge
+   in 2 iters instead of 8.
+
+3. Ablation confirms each component is necessary:
+   - Remove SLT → CSD drops 0.10 (Adam can't align color in 2 iters)
+   - Remove Adam → CSD drops 0.39 (no brushstroke, only color shift)
+   - Softmax vs Sinkhorn → CSD drops 0.05 (OT normalization matters)
+
+4. Spatial smoothing proof: backward gradient neighbor cosine = 0.601,
+   SLT update = 0.254, ratio 2.4x. Backward's attention Jacobian
+   couples adjacent tokens → brushstroke; SLT is per-token independent.
