@@ -51,7 +51,15 @@ def step(**kwargs):
     combined_img_ids      = kwargs["combined_img_ids"]
 
     # ── 0. Rank detection (identical to v3) ──
-    if not hasattr(controller, "_rank_cached"):
+    # Cache is keyed to the style latent: batch evaluation over multiple
+    # styles re-adapts per style. The old boolean guard leaked the first
+    # style's cached params (and an already-adapted csd_w) to every
+    # subsequent image in the same process.
+    _style_key = (tuple(style_latent.shape),
+                  float(style_latent.float().mean()),
+                  float(style_latent.float().std()))
+    if getattr(controller, "_rank_cache_key", None) != _style_key:
+        controller._rank_cache_key = _style_key
         with torch.no_grad():
             sl = style_latent[0].float()
             sl_c = sl - sl.mean(dim=0, keepdim=True)
@@ -76,7 +84,11 @@ def step(**kwargs):
         frac_mu = max(0.0, min(1.0, (r95 - LO_MU) / (HI_MU - LO_MU)))
         controller._cached_mu_weight = 0.9 - 0.2 * frac_mu
 
-        _base_csd_w = getattr(controller, "csd_w", 0.0)
+        # Adapt from the ORIGINAL csd_w, not the previously adapted value
+        # (controller.csd_w is overwritten in place below).
+        if not hasattr(controller, "_base_csd_w"):
+            controller._base_csd_w = getattr(controller, "csd_w", 0.0)
+        _base_csd_w = controller._base_csd_w
         if _base_csd_w > 0:
             LO_CW, HI_CW = 24.0, 44.0
             frac_cw = max(0.0, min(1.0, (r95 - LO_CW) / (HI_CW - LO_CW)))

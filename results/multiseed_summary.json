@@ -1,0 +1,65 @@
+{
+  "seeds": [
+    43,
+    44,
+    45
+  ],
+  "per_method": {
+    "hybrid2": {
+      "n_per_seed": 40,
+      "per_seed_csd_mean": {
+        "43": 0.6809850000000001,
+        "44": 0.6795325,
+        "45": 0.6843875
+      },
+      "per_seed_clip_t_mean": {
+        "43": 0.27372500000000005,
+        "44": 0.27637,
+        "45": 0.2723675
+      },
+      "csd_mean_over_seeds": 0.681635,
+      "csd_std_over_seeds": 0.002491913170638194,
+      "clip_t_mean_over_seeds": 0.27415416666666664,
+      "clip_t_std_over_seeds": 0.0020354703592372326,
+      "csd_mean_pooled": 0.681635,
+      "csd_std_pooled": 0.06804922668260706,
+      "clip_t_mean_pooled": 0.2741541666666667,
+      "clip_t_std_pooled": 0.034093625160880804
+    },
+    "adam8": {
+      "n_per_seed": 40,
+      "per_seed_csd_mean": {
+        "43": 0.65041,
+        "44": 0.6443,
+        "45": 0.6563249999999999
+      },
+      "per_seed_clip_t_mean": {
+        "43": 0.27602000000000004,
+        "44": 0.28824750000000005,
+        "45": 0.27715750000000006
+      },
+      "csd_mean_over_seeds": 0.6503450000000001,
+      "csd_std_over_seeds": 0.00601276350773916,
+      "clip_t_mean_over_seeds": 0.2804750000000001,
+      "clip_t_std_over_seeds": 0.0067551679290747445,
+      "csd_mean_pooled": 0.6503450000000001,
+      "csd_std_pooled": 0.07770418464229818,
+      "clip_t_mean_pooled": 0.280475,
+      "clip_t_std_pooled": 0.03290060725857797
+    }
+  },
+  "paired_ttest_csd_hybrid_vs_adam": {
+    "pooled_style_prompt_seed": {
+      "n": 120,
+      "t": 8.90845110610182,
+      "p": 7.135299508099614e-15,
+      "mean_diff_hybrid_minus_adam": 0.03129
+    },
+    "averaged_per_style_prompt": {
+      "n": 40,
+      "t": 6.53032652080549,
+      "p": 9.518060034074013e-08,
+      "mean_diff_hybrid_minus_adam": 0.031290000000000005
+    }
+  }
+}

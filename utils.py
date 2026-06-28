@@ -232,6 +232,96 @@ def sinkhorn_attn(Q, K_style, V_style, n_iters=3, tau=0.1, eps=1e-8):
     return out
 
 
+def sinkhorn_attn_freq(Q, K_style, V_style, n_iters=6, tau=0.1, hi_boost=2.0):
+    """
+    Frequency-aware Sinkhorn: boost high-freq components in cost matrix.
+
+    Subtracts spatial mean from Q/K before computing cost, so the OT plan
+    is driven by texture variation (high-freq) rather than absolute position (low-freq).
+    The plan is then applied to full V_style (preserving all info in transport).
+
+    hi_boost: weight for the high-freq cost relative to low-freq (>1 = prefer texture alignment)
+    Ported verbatim from custom_main_klein9b_t2i.py (Klein9B reference).
+    """
+    B, H, Lc, D = Q.shape
+    Ls = K_style.shape[2]
+
+    # Decompose Q and K into low-freq (spatial mean) and high-freq (residual)
+    Q_lo = Q.mean(dim=2, keepdim=True).expand_as(Q)  # [B, H, Lc, D]
+    K_lo = K_style.mean(dim=2, keepdim=True).expand_as(K_style)
+    Q_hi = Q - Q_lo
+    K_hi = K_style - K_lo
+
+    # Cost = blend of low-freq and high-freq similarity
+    logits_hi = torch.matmul(Q_hi, K_hi.transpose(-1, -2)) / (D ** 0.5 * tau)
+    logits_lo = torch.matmul(Q_lo, K_lo.transpose(-1, -2)) / (D ** 0.5 * tau)
+    logits = logits_lo + hi_boost * logits_hi
+
+    log_P = logits
+    for _ in range(n_iters):
+        log_P = log_P - torch.logsumexp(log_P, dim=-1, keepdim=True)
+        log_P = log_P - torch.logsumexp(log_P, dim=-2, keepdim=True)
+    P = torch.softmax(log_P, dim=-1)
+    return torch.matmul(P, V_style)
+
+
+def sinkhorn_latent_transport(content_lat, style_lat_noisy, style_lat_clean,
+                              alpha=0.5, n_iters=10, tau=0.1, grag_delta=1.0,
+                              mode="ot_adain"):
+    """
+    OT-based latent-space style transport (no forward/backward; replaces Adam in-loop).
+
+    Modes:
+      - "blend": linear interpolation toward transported style (fast but kills texture)
+      - "ot_adain": OT-matched per-token AdaIN (preserves content structure, transfers style statistics)
+
+    Cost: ~microseconds (two bmm + n_iters row/col normalize on N x M).
+    Ported verbatim from custom_main_klein9b_t2i.py (Klein9B reference).
+    """
+    B, N, D = content_lat.shape
+
+    # GRAG analog: compress style tokens toward mean to reduce layout leakage
+    style_noisy_g = style_lat_noisy
+    style_clean_g = style_lat_clean
+    if grag_delta < 1.0:
+        s_mean = style_lat_noisy.mean(dim=1, keepdim=True)
+        style_noisy_g = s_mean + grag_delta * (style_lat_noisy - s_mean)
+        sc_mean = style_lat_clean.mean(dim=1, keepdim=True)
+        style_clean_g = sc_mean + grag_delta * (style_lat_clean - sc_mean)
+
+    # Cost matrix: frequency-aware cosine similarity (high-freq residuals → match by texture, not position)
+    c_f = content_lat.float()
+    s_f = style_noisy_g.float()
+    c_hi = c_f - c_f.mean(dim=1, keepdim=True)
+    s_hi = s_f - s_f.mean(dim=1, keepdim=True)
+    c_norm = F.normalize(c_hi, dim=-1)
+    s_norm = F.normalize(s_hi, dim=-1)
+    logits = torch.bmm(c_norm, s_norm.transpose(1, 2)) / tau  # [B, N, M]
+
+    # Sinkhorn normalization (doubly-stochastic)
+    log_P = logits
+    for _ in range(n_iters):
+        log_P = log_P - torch.logsumexp(log_P, dim=-1, keepdim=True)
+        log_P = log_P - torch.logsumexp(log_P, dim=-2, keepdim=True)
+    T = torch.softmax(log_P, dim=-1)  # [B, N, M]
+
+    if mode == "blend":
+        transported = torch.bmm(T, style_clean_g.float()).to(content_lat.dtype)
+        return (1.0 - alpha) * content_lat + alpha * transported
+    else:
+        # OT-AdaIN: per-content-token OT-matched style mean/std; transfer stats, keep content high-freq.
+        style_f = style_clean_g.float()  # [B, M, D]
+        matched_mean = torch.bmm(T, style_f)  # [B, N, D]
+        matched_var = torch.bmm(T, style_f ** 2) - matched_mean ** 2
+        matched_std = (matched_var.clamp(min=1e-6)).sqrt()
+        content_f = content_lat.float()
+        c_mean = content_f.mean(dim=1, keepdim=True)
+        c_std = content_f.std(dim=1, keepdim=True).clamp(min=1e-6)
+        normed = (content_f - c_mean) / c_std
+        styled = normed * matched_std + matched_mean
+        return ((1.0 - alpha) * content_f + alpha * styled).to(content_lat.dtype)
+
+
 def sliced_wasserstein(x, y, n_projections=64):
     """
     Sliced Wasserstein Distance between two token distributions.

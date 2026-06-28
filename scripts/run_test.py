@@ -35,7 +35,8 @@ enable_gradient_checkpoint = True
 start_time = int(os.environ.get("OVERRIDE_START_TIME", "800"))
 os.environ["OVERRIDE_START_TIME"] = str(start_time)
 style_beta = 0.7
-core_type = os.environ.get("CORE_TYPE", "core_hybrid")
+# default was "core_hybrid", which does not exist under cores/
+core_type = os.environ.get("CORE_TYPE", "core_ot_attn")
 prompt = args.prompt
 
 pipe = AttDistPipeline.from_pretrained(model_name, torch_dtype=torch.float16)

@@ -28,3 +28,8 @@ logs/
 /*.pdf
 /*.png
 /*.html
+
+# ── LaTeX byproducts & agent working artifacts ──
+*.log
+.agent_tmp/
+.agent_reports/

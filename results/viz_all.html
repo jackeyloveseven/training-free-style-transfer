@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>所有实验结果可视化</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'SF Mono', 'Consolas', monospace; background: #0f1117; color: #e2e8f0; padding: 24px; }
+h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+.subtitle { color: #94a3b8; font-size: 13px; margin-bottom: 32px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.card { background: #1e2430; border: 1px solid #2d3748; border-radius: 12px; padding: 20px; }
+.card h2 { font-size: 13px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+.chart-wrap { position: relative; height: 320px; }
+.full { grid-column: 1 / -1; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { text-align: left; padding: 6px 10px; color: #64748b; border-bottom: 1px solid #2d3748; font-weight: 600; }
+td { padding: 5px 10px; border-bottom: 1px solid #1a2030; color: #cbd5e1; }
+tr:hover td { background: #252e3f; }
+.badge { display: inline-block; padding: 1px 7px; border-radius: 9999px; font-size: 10px; font-weight: 700; }
+.badge-ours { background: #1a3a5c; color: #60a5fa; }
+.badge-baseline { background: #2d1b35; color: #c084fc; }
+.badge-ablation { background: #1a3323; color: #4ade80; }
+.badge-sweep { background: #3a2a10; color: #fb923c; }
+.highlight td { color: #60a5fa; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>实验结果全览</h1>
+<p class="subtitle">SLT+Adam Hybrid 风格迁移 · 所有跑过的 CSV · 2026-06-18</p>
+
+<div class="grid">
+
+<!-- 散点图 1: T2I 主要对比 -->
+<div class="card">
+<h2>T2I 主要方法对比 (CSD vs CLIP-T)</h2>
+<div class="chart-wrap"><canvas id="chart_main"></canvas></div>
+</div>
+
+<!-- 散点图 2: Pareto 扫参 -->
+<div class="card">
+<h2>α sweep + t_start sweep (Pareto)</h2>
+<div class="chart-wrap"><canvas id="chart_pareto"></canvas></div>
+</div>
+
+<!-- 散点图 3: Adam-only N sweep -->
+<div class="card">
+<h2>Adam-only N sweep (30-sample)</h2>
+<div class="chart-wrap"><canvas id="chart_adam"></canvas></div>
+</div>
+
+<!-- 散点图 4: Native edit per-sample -->
+<div class="card">
+<h2>Native Edit vs Ours (per sample scatter)</h2>
+<div class="chart-wrap"><canvas id="chart_native"></canvas></div>
+</div>
+
+<!-- 散点图 5: FLUX.1-dev per style -->
+<div class="card">
+<h2>FLUX.1-dev vs Klein per style</h2>
+<div class="chart-wrap"><canvas id="chart_flux"></canvas></div>
+</div>
+
+<!-- 散点图 6: supp metrics -->
+<div class="card">
+<h2>感知指标 (DINO-style vs Gram-dist)</h2>
+<div class="chart-wrap"><canvas id="chart_supp"></canvas></div>
+</div>
+
+<!-- 大表 -->
+<div class="card full">
+<h2>所有 method 均值汇总</h2>
+<table id="summary_table">
+<thead><tr><th>File</th><th>Method</th><th>CSD ↑</th><th>CLIP-T/I ↑</th><th>n</th><th>Type</th></tr></thead>
+<tbody id="table_body"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+// ── data ──────────────────────────────────────────────────────────────
+const RECORDS = [
+  // External baselines
+  {file:'ext_csgo.csv', method:'CSGO', csd:0.5246, y:0.2757, y_label:'clip_t', n:40, type:'baseline'},
+  {file:'ext_ipadapter.csv', method:'IP-Adapter', csd:0.3038, y:0.2960, y_label:'clip_t', n:40, type:'baseline'},
+  {file:'ext_styleshot.csv', method:'StyleShot', csd:0.5327, y:0.2693, y_label:'clip_t', n:40, type:'baseline'},
+  {file:'ext_uso_t2i.csv', method:'USO (T2I)', csd:0.5041, y:0.3050, y_label:'clip_t', n:40, type:'baseline'},
+  {file:'ext_uso_i2i.csv', method:'USO (I2I)', csd:0.4823, y:0.7254, y_label:'clip_i', n:40, type:'baseline'},
+  // T2I baselines
+  {file:'t2i_baselines.csv', method:'text_only', csd:-0.0112, y:0.3151, y_label:'clip_t', n:40, type:'baseline'},
+  {file:'t2i_baselines.csv', method:'adain_only', csd:0.1464, y:0.3137, y_label:'clip_t', n:40, type:'baseline'},
+  {file:'t2i_baselines.csv', method:'inject_b05', csd:0.0389, y:0.3139, y_label:'clip_t', n:40, type:'baseline'},
+  {file:'t2i_baselines.csv', method:'inject_b10', csd:0.8205, y:0.1499, y_label:'clip_t', n:40, type:'baseline'},
+  // Ablation
+  {file:'t2i_ablation.csv', method:'Ours Hybrid N=2', csd:0.6810, y:0.2737, y_label:'clip_t', n:40, type:'ours'},
+  {file:'t2i_ablation.csv', method:'No SLT (Adam-2)', csd:0.5837, y:0.2910, y_label:'clip_t', n:40, type:'ablation'},
+  {file:'t2i_ablation.csv', method:'No Adam (SLT only)', csd:0.2984, y:0.3090, y_label:'clip_t', n:40, type:'ablation'},
+  {file:'t2i_ablation.csv', method:'Softmax target', csd:0.6328, y:0.2825, y_label:'clip_t', n:40, type:'ablation'},
+  {file:'t2i_ablation.csv', method:'No freq boost', csd:0.6782, y:0.2707, y_label:'clip_t', n:40, type:'ablation'},
+  {file:'t2i_ablation.csv', method:'Adam-8 (upper)', csd:0.6504, y:0.2760, y_label:'clip_t', n:40, type:'ablation'},
+  // Full benchmark
+  {file:'t2i_full_benchmark.csv', method:'Hybrid (full 228)', csd:0.6387, y:0.2757, y_label:'clip_t', n:228, type:'ours'},
+  {file:'t2i_full_benchmark.csv', method:'Adam-8 (full 228)', csd:0.6069, y:0.2790, y_label:'clip_t', n:228, type:'baseline'},
+  // ult methods
+  {file:'t2i_full_ultA.csv', method:'ult_w2_keepA', csd:0.6482, y:0.2699, y_label:'clip_t', n:234, type:'ours'},
+  // p1cheap sweeps
+  {file:'t2i_p1cheap.csv', method:'lrs_off', csd:0.6895, y:0.2673, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'τ=0.01', csd:0.6850, y:0.2698, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'τ=0.05', csd:0.6775, y:0.2776, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'τ=0.15', csd:0.6611, y:0.2794, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'t_start=750', csd:0.4863, y:0.3023, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'t_start=800', csd:0.6047, y:0.2930, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'t_start=850 (default)', csd:0.6810, y:0.2737, y_label:'clip_t', n:40, type:'ours'},
+  {file:'t2i_p1cheap.csv', method:'t_start=900', csd:0.7503, y:0.2381, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'blend α=0.05', csd:0.2260, y:0.3109, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_p1cheap.csv', method:'blend α=0.20', csd:0.4668, y:0.2970, y_label:'clip_t', n:40, type:'sweep'},
+  // sltpareto
+  {file:'t2i_sltpareto.csv', method:'ota α=0.2', csd:0.7119, y:0.2586, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_sltpareto.csv', method:'ota α=0.3', csd:0.7119, y:0.2396, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_sltpareto.csv', method:'W2 α=0.2', csd:0.7207, y:0.2534, y_label:'clip_t', n:40, type:'sweep'},
+  // Native edit
+  {file:'native_edit.csv', method:'Klein native edit', csd:0.4874, y:0.3007, y_label:'clip_t', n:40, type:'baseline'},
+  // FLUX.1-dev
+  {file:'flux1dev_hybrid.csv', method:'FLUX.1-dev Hybrid', csd:0.7188, y:0.2909, y_label:'clip_t', n:40, type:'ours'},
+  // I2I
+  {file:'i2i_ablation.csv', method:'I2I Hybrid', csd:0.6963, y:0.6626, y_label:'clip_i', n:40, type:'ours'},
+  {file:'i2i_full_benchmark.csv', method:'I2I full (741)', csd:0.6674, y:0.6636, y_label:'clip_i', n:741, type:'ours'},
+  // Multi-seed
+  {file:'t2i_seed44.csv', method:'seed=44 hybrid', csd:0.6841, y:0.2751, y_label:'clip_t', n:40, type:'sweep'},
+  {file:'t2i_seed45.csv', method:'seed=45 hybrid', csd:0.6797, y:0.2735, y_label:'clip_t', n:40, type:'sweep'},
+  // Adam sweep
+  {file:'t2i_adam_only_sweep.csv', method:'Adam N=1', csd:0.3627, y:0.3076, y_label:'clip_t', n:30, type:'sweep'},
+  {file:'t2i_adam_only_sweep.csv', method:'Adam N=2', csd:0.5459, y:0.2931, y_label:'clip_t', n:30, type:'sweep'},
+  {file:'t2i_adam_only_sweep.csv', method:'Adam N=3', csd:0.6098, y:0.2730, y_label:'clip_t', n:30, type:'sweep'},
+  {file:'t2i_adam_only_sweep.csv', method:'Adam N=4', csd:0.6400, y:0.2623, y_label:'clip_t', n:30, type:'sweep'},
+  {file:'t2i_adam_only_sweep.csv', method:'Adam N=5', csd:0.6539, y:0.2552, y_label:'clip_t', n:30, type:'sweep'},
+  {file:'t2i_adam_only_sweep.csv', method:'Adam N=8', csd:0.6849, y:0.2374, y_label:'clip_t', n:30, type:'sweep'},
+];
+
+const COLOR = {
+  ours:     '#60a5fa',
+  baseline: '#c084fc',
+  ablation: '#4ade80',
+  sweep:    '#fb923c',
+};
+
+// ── table ──
+const tbody = document.getElementById('table_body');
+const sorted = [...RECORDS].sort((a,b) => b.csd - a.csd);
+sorted.forEach(r => {
+  const tr = document.createElement('tr');
+  if (r.type === 'ours') tr.className = 'highlight';
+  tr.innerHTML = `
+    <td style="color:#475569;font-size:11px">${r.file}</td>
+    <td>${r.method}</td>
+    <td>${r.csd.toFixed(4)}</td>
+    <td>${r.y.toFixed(4)} <span style="color:#475569;font-size:10px">(${r.y_label})</span></td>
+    <td style="color:#475569">${r.n}</td>
+    <td><span class="badge badge-${r.type}">${r.type}</span></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+// ── helpers ──
+function makeScatter(id, datasets, xLabel='CSD ↑', yLabel='CLIP-T ↑', xRange=null, yRange=null) {
+  const ctx = document.getElementById(id).getContext('2d');
+  new Chart(ctx, {
+    type: 'scatter',
+    data: { datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color:'#94a3b8', font:{size:11}, boxWidth:10 } },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: (${ctx.parsed.x.toFixed(3)}, ${ctx.parsed.y.toFixed(3)})`
+          }
+        }
+      },
+      scales: {
+        x: { title:{display:true,text:xLabel,color:'#64748b'}, ticks:{color:'#64748b'}, grid:{color:'#1e2430'},
+             ...(xRange ? {min:xRange[0],max:xRange[1]} : {}) },
+        y: { title:{display:true,text:yLabel,color:'#64748b'}, ticks:{color:'#64748b'}, grid:{color:'#1e2430'},
+             ...(yRange ? {min:yRange[0],max:yRange[1]} : {}) },
+      }
+    }
+  });
+}
+
+// ── Chart 1: T2I main comparison ──
+makeScatter('chart_main', [
+  { label:'Ours Hybrid', data:[{x:0.681,y:0.274}], backgroundColor:'#60a5fa', pointRadius:10, pointStyle:'star' },
+  { label:'FLUX.1-dev', data:[{x:0.719,y:0.291}], backgroundColor:'#38bdf8', pointRadius:8 },
+  { label:'ult_w2_keepA', data:[{x:0.648,y:0.270}], backgroundColor:'#0ea5e9', pointRadius:7 },
+  { label:'USO T2I', data:[{x:0.504,y:0.305}], backgroundColor:'#c084fc', pointRadius:7 },
+  { label:'StyleShot', data:[{x:0.533,y:0.269}], backgroundColor:'#a855f7', pointRadius:7 },
+  { label:'CSGO', data:[{x:0.525,y:0.276}], backgroundColor:'#7c3aed', pointRadius:7 },
+  { label:'inject_b10', data:[{x:0.821,y:0.150}], backgroundColor:'#f43f5e', pointRadius:7 },
+  { label:'Native edit', data:[{x:0.487,y:0.301}], backgroundColor:'#fb923c', pointRadius:7 },
+  { label:'Adam-8 (full)', data:[{x:0.607,y:0.279}], backgroundColor:'#4ade80', pointRadius:7 },
+  { label:'No SLT', data:[{x:0.584,y:0.291}], backgroundColor:'#86efac', pointRadius:6 },
+  { label:'SLT only', data:[{x:0.298,y:0.309}], backgroundColor:'#bbf7d0', pointRadius:6 },
+], 'CSD ↑', 'CLIP-T ↑');
+
+// ── Chart 2: Pareto sweep ──
+const sweepData = [
+  {x:0.226,y:0.311,label:'blend α=0.05'},{x:0.467,y:0.297,label:'blend α=0.20'},
+  {x:0.486,y:0.302,label:'t=750'},{x:0.605,y:0.293,label:'t=800'},
+  {x:0.681,y:0.274,label:'t=850 ★'},{x:0.750,y:0.238,label:'t=900'},
+  {x:0.712,y:0.259,label:'ota α=0.2'},{x:0.712,y:0.240,label:'ota α=0.3'},
+  {x:0.721,y:0.253,label:'W2 α=0.2'},
+  {x:0.685,y:0.270,label:'τ=0.01'},{x:0.678,y:0.278,label:'τ=0.05'},
+  {x:0.661,y:0.279,label:'τ=0.15'},
+];
+new Chart(document.getElementById('chart_pareto').getContext('2d'), {
+  type:'scatter', data:{datasets:[
+    {label:'t_start sweep',data:[
+      {x:0.486,y:0.302},{x:0.605,y:0.293},{x:0.681,y:0.274},{x:0.750,y:0.238}
+    ],backgroundColor:'#fb923c',pointRadius:8,showLine:true,borderColor:'#fb92304d'},
+    {label:'α sweep (ota)',data:[
+      {x:0.681,y:0.274},{x:0.712,y:0.259},{x:0.712,y:0.240}
+    ],backgroundColor:'#60a5fa',pointRadius:8,showLine:true,borderColor:'#60a5fa4d'},
+    {label:'W2 α=0.2',data:[{x:0.721,y:0.253}],backgroundColor:'#f472b6',pointRadius:10,pointStyle:'star'},
+    {label:'τ sweep',data:[
+      {x:0.685,y:0.270},{x:0.681,y:0.274},{x:0.678,y:0.278},{x:0.661,y:0.279}
+    ],backgroundColor:'#4ade80',pointRadius:7,showLine:true,borderColor:'#4ade804d'},
+    {label:'blend',data:[{x:0.226,y:0.311},{x:0.467,y:0.297}],backgroundColor:'#94a3b8',pointRadius:6},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#94a3b8',font:{size:11},boxWidth:10}}},
+    scales:{
+      x:{title:{display:true,text:'CSD ↑',color:'#64748b'},ticks:{color:'#64748b'},grid:{color:'#1e2430'}},
+      y:{title:{display:true,text:'CLIP-T ↑',color:'#64748b'},ticks:{color:'#64748b'},grid:{color:'#1e2430'}},
+    }}
+});
+
+// ── Chart 3: Adam N sweep ──
+makeScatter('chart_adam', [
+  {label:'Adam-only', data:[
+    {x:0.363,y:0.308},{x:0.546,y:0.293},{x:0.610,y:0.273},
+    {x:0.640,y:0.262},{x:0.654,y:0.255},{x:0.685,y:0.237}
+  ], backgroundColor:'#fb923c', pointRadius:8, showLine:true, borderColor:'#fb92304d'},
+  {label:'Hybrid N=2 ★', data:[{x:0.681,y:0.274}], backgroundColor:'#60a5fa', pointRadius:12, pointStyle:'star'},
+], 'CSD ↑', 'CLIP-T ↑');
+
+// ── Chart 4: Native edit per-sample scatter ──
+const ne_data = [
+  {x:0.873,y:0.230},{x:0.839,y:0.290},{x:0.817,y:0.283},{x:0.806,y:0.312},
+  {x:0.794,y:0.252},{x:0.785,y:0.287},{x:0.768,y:0.304},{x:0.744,y:0.308},
+  {x:0.736,y:0.308},{x:0.718,y:0.311},{x:0.631,y:0.313},{x:0.619,y:0.298},
+  {x:0.545,y:0.306},{x:0.487,y:0.305},{x:0.449,y:0.295},{x:0.432,y:0.311},
+  {x:0.389,y:0.313},{x:0.332,y:0.302},{x:0.304,y:0.310},{x:0.271,y:0.302},
+  {x:0.241,y:0.315},{x:0.198,y:0.310},{x:0.150,y:0.333},{x:0.123,y:0.335},
+  {x:0.106,y:0.318},{x:0.092,y:0.325},{x:0.036,y:0.298},
+];
+const hy_data = [
+  {x:0.753,y:0.308},{x:0.678,y:0.251},{x:0.708,y:0.305},{x:0.686,y:0.276},
+  {x:0.753,y:0.280},{x:0.759,y:0.291},{x:0.635,y:0.295},{x:0.700,y:0.295},
+  {x:0.746,y:0.297},{x:0.769,y:0.327},{x:0.726,y:0.254},{x:0.748,y:0.268},
+  {x:0.708,y:0.270},{x:0.715,y:0.275},{x:0.673,y:0.260},{x:0.672,y:0.265},
+  {x:0.660,y:0.283},{x:0.648,y:0.258},{x:0.629,y:0.271},{x:0.614,y:0.264},
+  {x:0.592,y:0.280},{x:0.573,y:0.281},{x:0.561,y:0.274},{x:0.547,y:0.259},
+  {x:0.532,y:0.268},{x:0.519,y:0.272},{x:0.471,y:0.263},
+];
+makeScatter('chart_native', [
+  {label:'Klein native edit', data:ne_data, backgroundColor:'#f472b680', pointRadius:5},
+  {label:'Ours Hybrid', data:hy_data, backgroundColor:'#60a5fa90', pointRadius:5},
+], 'CSD ↑', 'CLIP-T ↑');
+
+// ── Chart 5: FLUX per style ──
+const flux_styles = [0,10,14,20,27,28,33,38];
+const flux_csd = [0.667,0.719,0.732,0.690,0.779,0.749,0.676,0.740];
+const klein_csd = [0.660,0.741,0.717,0.666,0.728,0.751,0.653,0.726]; // approx from ablation
+new Chart(document.getElementById('chart_flux').getContext('2d'), {
+  type:'bar',
+  data:{
+    labels: flux_styles.map(s=>`sty${String(s).padStart(2,'0')}`),
+    datasets:[
+      {label:'Klein 9B', data:klein_csd, backgroundColor:'#60a5fa80', borderColor:'#60a5fa', borderWidth:1},
+      {label:'FLUX.1-dev', data:flux_csd, backgroundColor:'#f472b680', borderColor:'#f472b6', borderWidth:1},
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#94a3b8',font:{size:11},boxWidth:10}}},
+    scales:{
+      x:{ticks:{color:'#64748b'},grid:{color:'#1e2430'}},
+      y:{ticks:{color:'#64748b'},grid:{color:'#1e2430'},min:0.5,title:{display:true,text:'CSD ↑',color:'#64748b'}},
+    }}
+});
+
+// ── Chart 6: DINO vs Gram ──
+makeScatter('chart_supp', [
+  {label:'Ours Hybrid', data:[{x:0.1548,y:2.731}], backgroundColor:'#60a5fa', pointRadius:12, pointStyle:'star'},
+  {label:'StyleShot', data:[{x:0.1280,y:3.541}], backgroundColor:'#a855f7', pointRadius:9},
+  {label:'USO', data:[{x:0.1092,y:3.681}], backgroundColor:'#c084fc', pointRadius:9},
+  {label:'Ours w/o LRS', data:[{x:0.1639,y:2.536}], backgroundColor:'#4ade80', pointRadius:9},
+], 'DINO-style ↑', 'Gram-dist ↓ (lower=more style)');
+
+</script>
+</body>
+</html>

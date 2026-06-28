@@ -90,7 +90,8 @@ for ns, iters, st, sw, aa, hb, cw in configs:
     env['STY_IMAGE'] = 'sty/27.png'
     env['NUM_STEPS'] = str(ns)
     env['ITERS'] = str(iters)
-    env['START_TIME'] = str(st)
+    # Entry points read OVERRIDE_START_TIME (old START_TIME key was never read).
+    env['OVERRIDE_START_TIME'] = str(st)
     env['STYLE_W'] = str(sw)
     env['ADAIN_ALPHA'] = str(aa)
     env['FREQ_HI_BOOST'] = str(hb)

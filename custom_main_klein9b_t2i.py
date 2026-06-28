@@ -29,7 +29,8 @@ seed = int(os.environ.get("SEED", "43"))
 width = int(os.environ.get("WIDTH", "512"))
 height = int(os.environ.get("HEIGHT", "512"))
 num_inference_steps = int(os.environ.get("NUM_STEPS", "25"))
-start_time = int(os.environ.get("OVERRIDE_START_TIME", "850"))
+start_time = int(os.environ.get("OVERRIDE_START_TIME",
+                                os.environ.get("START_TIME", "850")))
 os.environ["OVERRIDE_START_TIME"] = str(start_time)
 embedded_guidance = float(os.environ.get("EMBEDDED_GUIDANCE", "0"))
 lr = float(os.environ.get("LR", "0.01"))
@@ -687,6 +688,44 @@ for i, t_val in pbar:
     timestep = t_val.unsqueeze(0).to(dtype=torch.bfloat16, device="cuda")
     cache.clear(); controller.step()
 
+    # Real attention K/V injection (eq:injection): style K/V at the CURRENT
+    # timestep, blended during this step's single denoise forward.
+    # Fixes the old double-step bug (Step 1 advanced to sigma_{i+1}, then the
+    # inject branch forwarded that latent at t_i and stepped a second time)
+    # and skips the AdaIN warm-start for a faithful injection baseline.
+    if _OPTIM_MODE == "inject" and t_val < start_time:
+        if i < num_inference_steps - 1:
+            sty_noise_inj = torch.randn_like(style_latent)
+            style_latent_inj = scheduler.add_noise(
+                style_latent, sty_noise_inj, timesteps[i:i + 1])
+        else:
+            style_latent_inj = style_latent
+        with torch.no_grad():
+            _ = dit(
+                hidden_states=style_latent_inj.to(device="cuda", dtype=torch.bfloat16),
+                timestep=timestep / 1000,
+                guidance=None,
+                encoder_hidden_states=null_embeds,
+                txt_ids=null_text_ids,
+                img_ids=style_image_ids,
+            )
+        _, inj_k_list, inj_v_list, _ = cache.get()
+        controller.set_inject(inj_k_list, inj_v_list, _INJECT_BETA)
+        cache.clear(); controller.step()
+        with torch.no_grad():
+            noise_pred_styled = dit(
+                hidden_states=latents,
+                timestep=timestep / 1000,
+                guidance=guidance_tensor,
+                encoder_hidden_states=prompt_embeds,
+                txt_ids=text_ids,
+                img_ids=image_ids,
+            )
+        latents = scheduler.step(noise_pred_styled, t_val, latents)
+        controller.reset_mode()
+        pbar.set_postfix(mode="inject", beta=f"{_INJECT_BETA:.2f}")
+        continue
+
     # Step 1: Denoising (pure T2I, no content image concat)
     with torch.no_grad():
         noise_pred = dit(
@@ -757,21 +796,9 @@ for i, t_val in pbar:
     latents = latents_warmed.detach()
 
     if _OPTIM_MODE == "inject":
-        # === StyleID Mode: direct attention injection ===
-        controller.set_inject(ref_k_list, ref_v_list, _INJECT_BETA)
-        cache.clear(); controller.step()
-        with torch.no_grad():
-            noise_pred_styled = dit(
-                hidden_states=latents,
-                timestep=timestep / 1000,
-                guidance=guidance_tensor,
-                encoder_hidden_states=prompt_embeds,
-                txt_ids=text_ids,
-                img_ids=image_ids,
-            )
-        latents = scheduler.step(noise_pred_styled, t_val, content_anchor)
-        controller.reset_mode()
-        pbar.set_postfix(mode="inject", beta=f"{_INJECT_BETA:.2f}")
+        # Injection is handled before Step 1 (single-forward, single-step);
+        # this branch is unreachable and kept only to preserve the elif chain.
+        pass
 
     elif _OPTIM_MODE == "scfg":
         # === Style Classifier-Free Guidance ===
