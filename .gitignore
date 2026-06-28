@@ -33,3 +33,6 @@ logs/
 *.log
 .agent_tmp/
 .agent_reports/
+
+# ── Consolidated non-code writeup artifacts (blog HTML/zip, stray PDF) ──
+blog/
