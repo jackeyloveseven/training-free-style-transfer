@@ -40,8 +40,8 @@ env.update({
     "AE": str(WEIGHTS / "FLUX.1-dev/ae.safetensors"),
     "CLIP": str(WEIGHTS / "text/clip-vit-large-patch14"),
     "T5": str(WEIGHTS / "text/t5-xxl"),
-    "LORA": "/mnt/local/huggingface_cache/hub/models--bytedance-research--USO/snapshots/18feb32b915cd0c577eb43fbcaf28a593bb629f5/uso_flux_v1.0/dit_lora.safetensors",
-    "PROJECTION_MODEL": "/mnt/local/huggingface_cache/hub/models--bytedance-research--USO/snapshots/18feb32b915cd0c577eb43fbcaf28a593bb629f5/uso_flux_v1.0/projector.safetensors",
+    "LORA": "models/USO/uso_flux_v1.0/dit_lora.safetensors",
+    "PROJECTION_MODEL": "models/USO/uso_flux_v1.0/projector.safetensors",
     "SIGLIP_PATH": str(WEIGHTS / "siglip-so400m-patch14-384"),
     "PYTHONPATH": str(USO_DIR) + os.pathsep + os.environ.get("PYTHONPATH", ""),
 })

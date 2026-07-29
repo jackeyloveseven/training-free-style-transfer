@@ -36,3 +36,8 @@ logs/
 
 # ── Consolidated non-code writeup artifacts (blog HTML/zip, stray PDF) ──
 blog/
+
+# Local model weights and third-party source checkouts.
+models/*
+!models/README.md
+third_party/

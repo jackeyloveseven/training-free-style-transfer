@@ -143,7 +143,7 @@
 
 ## 已知坑（复现前必读）
 
-- **硬编码绝对路径**：几乎所有脚本写死 `CWD=/home/ubuntu/.../attention_20260426_090948`、`DIFFSYNTH_ROOT=/mnt/local/yzh/prog/DiffSynth-Studio`、`KLEIN9B_ROOT=/mnt/local/klein9b`、各 `/mnt/local/baselines/*` 与 `/home/ubuntu/chengyanli/items/CSD_Score`。换机器需逐一改。
+- **相对路径约定**：模型与权重统一位于项目根目录的 `models/`，DiffSynth-Studio 默认位于 `third_party/DiffSynth-Studio/`，CSD 使用 `../../CSD_Score`。请从项目根目录启动脚本；完整布局见 `../../../../README.md`。
 - **外部 baseline 代码/权重缺失**：StyleShot、USO、CSGO 部分权重已从磁盘删除（USO 代码仅存于 `..._backup_20260612`）。各脚本 docstring 顶部给了 `hf download` / `git clone` 恢复命令，运行前先恢复。
 - **个别 Windows `D:` 路径残留**：少数脚本/配置仍含历史 `D:` 残留，复现前需改为 Linux 路径。
 - **风格集仍含被排除样本**：部分固定 `STYLES` 列表含 `14`；统计/拼图时务必剔除 `sty04/sty14/cnt19`。

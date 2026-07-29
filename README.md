@@ -6,12 +6,41 @@ MM-DiT 上的 **training-free 风格迁移**：冻结主干，在去噪过程中
 - **数字真源（任何指标以此为准）→ `items/sec/results/CANONICAL.md`**
 - 论文每张图/表的端到端溯源 → `items/sec/provenance/`（manifest + 44 dossier + GAPS）
 
+## 安装环境与下载模型
+
+建议使用 Python 3.11/3.12。先安装与本机 CUDA 匹配的 PyTorch，再安装依赖和
+DiffSynth-Studio：
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+git clone https://github.com/modelscope/DiffSynth-Studio.git third_party/DiffSynth-Studio
+python -m pip install -e third_party/DiffSynth-Studio
+hf auth login  # FLUX/Klein 等 gated 模型需先在网页接受许可证
+```
+
+下载命令按用途拆分，避免一次下载全部大模型：
+
+```bash
+bash scripts/download_models.sh core       # FLUX.1-dev、Kontext、Klein 9B
+bash scripts/download_models.sh scores     # DINOv2、CLIP 打分模型
+bash scripts/download_models.sh baselines  # IP-Adapter、USO、CSGO、StyleShot、Qwen
+bash scripts/download_models.sh all        # 全部下载
+```
+
+`core` 是主实验所需；CSD 打分还需同级 `../../CSD_Score/models/` 下的
+`ViT-L-14.pt` 和 `checkpoint.pth`。`scores` 下载 DINOv2 与 Hugging Face CLIP；
+VGG19/LPIPS 首次运行时由 torchvision/lpips 自动获取。所有权重都放在当前仓库
+`models/` 下，具体目录见 [`models/README.md`](models/README.md)。
+
 ## Quickstart
 
 ```bash
-# 解释器：T2I/I2I 用 flux 环境（有 diffusers）；eval/分析用 sensenova（无 diffusers，别混）
-FLUXPY=/home/ubuntu/chengyanli/flux/bin/python3
-EVALPY=/home/ubuntu/miniconda3/envs/sensenova/bin/python
+# 在本目录执行；模型统一放在 models/
+FLUXPY=python
+EVALPY=python
 
 # T2I 单图（FLUX.1-dev）
 PROMPT="A panda eat bamboo" STY_IMAGE=sty/27.png $FLUXPY custom_main.py

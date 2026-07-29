@@ -24,8 +24,8 @@ import open_clip
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "0")
 os.environ.setdefault("DIFFSYNTH_ATTENTION_IMPLEMENTATION", "torch")
 
-DIFFSYNTH_ROOT = "/mnt/local/yzh/prog/DiffSynth-Studio"
-KLEIN9B_ROOT = "/mnt/local/klein9b"
+DIFFSYNTH_ROOT = "third_party/DiffSynth-Studio"
+KLEIN9B_ROOT = "models/klein9b"
 CWD = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948"
 RESULTS_DIR = Path(CWD) / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
@@ -81,10 +81,10 @@ from diffsynth.pipelines.flux2_image import Flux2ImagePipeline, ModelConfig
 from diffsynth.diffusion.flow_match import FlowMatchScheduler
 
 # ============== CSD + CLIP metrics ==============
-sys.path.insert(0, '/home/ubuntu/chengyanli/items/CSD_Score')
+sys.path.insert(0, '../../CSD_Score')
 from model import CSD_CLIP, convert_state_dict
 
-csd_dir = '/home/ubuntu/chengyanli/items/CSD_Score'
+csd_dir = '../../CSD_Score'
 csd_model = CSD_CLIP('vit_large', 'default', model_path=f'{csd_dir}/models/ViT-L-14.pt')
 ck = torch.load(f'{csd_dir}/models/checkpoint.pth', map_location='cpu', weights_only=False)
 csd_model.load_state_dict(convert_state_dict(ck['model_state_dict']), strict=False)
@@ -537,7 +537,7 @@ _il_std = torch.tensor([0.26862954, 0.26130258, 0.27577711], device="cuda").view
 def _get_il_clip():
     if "m" not in _il:
         from transformers import CLIPModel, CLIPTokenizer
-        p = "/mnt/local/huggingface_cache/hub/models--openai--clip-vit-large-patch14/snapshots/32bd64288804d66eefd0ccbe215aa642df71cc41"
+        p = "models/clip-vit-large-patch14"
         _il["m"] = CLIPModel.from_pretrained(p).to("cuda").eval()
         _il["tok"] = CLIPTokenizer.from_pretrained(p)
         for pr in _il["m"].parameters():

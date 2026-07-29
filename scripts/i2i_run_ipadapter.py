@@ -8,7 +8,7 @@ image. For I2I we swap to FluxImg2ImgPipeline:
   - strength        = 0.6        (lower = more content kept; tune if needed)
 
 All weights are local and verified present:
-  FLUX.1-dev          /mnt/local/cache/huggingface/FLUX.1-dev
+  FLUX.1-dev          models/FLUX.1-dev
   XLabs IP-Adapter    hub models--XLabs-AI--flux-ip-adapter/.../ip_adapter.safetensors
   CLIP image encoder  hub models--openai--clip-vit-large-patch14
 
@@ -18,15 +18,15 @@ Output: d_grand/i2i_ext_ipadapter/ipadapter_cnt{CC}_sty{SS}.png  (512x512)
 Run: /home/ubuntu/chengyanli/flux/bin/python3 scripts/i2i_run_ipadapter.py
 """
 import os, glob
-os.environ.setdefault("HF_HOME", "/mnt/local/huggingface_cache")
+os.environ.setdefault("HF_HOME", "models/.cache/huggingface")
 import torch
 from PIL import Image
 from diffusers import FluxImg2ImgPipeline
 
 CWD = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948"
-FLUX = "/mnt/local/cache/huggingface/FLUX.1-dev"
-IPDIR = glob.glob("/mnt/local/huggingface_cache/hub/models--XLabs-AI--flux-ip-adapter/snapshots/*")[0]
-CLIP = glob.glob("/mnt/local/huggingface_cache/hub/models--openai--clip-vit-large-patch14/snapshots/*")[0]
+FLUX = "models/FLUX.1-dev"
+IPDIR = glob.glob("models/flux-ip-adapter")[0]
+CLIP = glob.glob("models/clip-vit-large-patch14")[0]
 STY_DIR = f"{CWD}/sty"
 CNT_DIR = f"{CWD}/cnt"
 OUT_DIR = f"{CWD}/d_grand/i2i_ext_ipadapter"

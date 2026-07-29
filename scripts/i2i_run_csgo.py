@@ -16,17 +16,17 @@ Output: d_grand/i2i_ext_csgo/csgo_cnt{CC}_sty{SS}.png  (512x512)
 Run: /home/ubuntu/chengyanli/flux/bin/python3 scripts/i2i_run_csgo.py
 
 PREREQUISITE (verify before launch): the CSGO adapter checkpoint
-  /mnt/local/baselines/CSGO/base_models/CSGO/csgo_4_32.bin
+  models/CSGO/csgo_4_32.bin
 must exist. It is currently MISSING on disk (only InstantX/CSGO metadata is cached,
 no blobs). Re-download with:
   hf download InstantX/CSGO csgo_4_32.bin \
-      --local-dir /mnt/local/baselines/CSGO/base_models/CSGO
+      --local-dir models/CSGO
 """
 import os, sys
 import torch
 from PIL import Image
 
-REPO = "/mnt/local/baselines/CSGO"
+REPO = "models/CSGO-code"
 sys.path.insert(0, REPO)
 from ip_adapter.utils import BLOCKS, controlnet_BLOCKS, resize_content
 from diffusers import AutoencoderKL, ControlNetModel, StableDiffusionXLControlNetPipeline

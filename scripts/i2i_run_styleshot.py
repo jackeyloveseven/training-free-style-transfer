@@ -8,20 +8,20 @@ drives a ControlNet so structure is preserved while the style encoder injects st
 
 ==================== BLOCKER (verify before launch) ====================
 BOTH the StyleShot repo code AND its weights are CURRENTLY MISSING on disk:
-  - repo /mnt/local/baselines/StyleShot  (provides `from ip_adapter import StyleShot`,
+  - repo models/StyleShot  (provides `from ip_adapter import StyleShot`,
     StyleContentStableDiffusionControlNetPipeline): GONE -- no copy found anywhere on disk.
-  - weights /mnt/local/baselines/models/StyleShot/pretrained_weight/{ip.bin,
+  - weights models/StyleShot/pretrained_weight/{ip.bin,
     style_aware_encoder.bin}: GONE.
-  - SD1.5 base /mnt/local/baselines/models/stable-diffusion-v1-5: GONE.
+  - SD1.5 base models/stable-diffusion-v1-5: GONE.
   - hub models--Gaojunyao--StyleShot: metadata only (0 blobs).
 The existing d_grand/ext_styleshot/* (T2I) were made before these were deleted.
 
 To run, restore all three:
-  git clone https://github.com/open-mmlab/StyleShot /mnt/local/baselines/StyleShot
-  hf download Gaojunyao/StyleShot --local-dir /mnt/local/baselines/models/StyleShot
+  git clone https://github.com/open-mmlab/StyleShot models/StyleShot
+  hf download Gaojunyao/StyleShot --local-dir models/StyleShot
   hf download Gaojunyao/StyleShot_lineart ...   # contour ControlNet for I2I
   hf download stable-diffusion-v1-5/stable-diffusion-v1-5 \
-      --local-dir /mnt/local/baselines/models/stable-diffusion-v1-5
+      --local-dir models/stable-diffusion-v1-5
 Then verify imports and the exact ControlNet/transform names against the restored repo's
 README before launching (the content-I2I constructor signature differs across StyleShot
 releases -- the call below follows the upstream `styleshot_image_driven_demo.py`).
@@ -38,17 +38,17 @@ import torch
 from PIL import Image
 
 # --- paths (mirror scripts/run_new6_styleshot.py; UPDATE after restoring weights) ---
-SS_DIR = "/mnt/local/baselines/StyleShot"
+SS_DIR = "models/StyleShot"
 sys.path.insert(0, SS_DIR)
 from transformers import CLIPVisionModelWithProjection
 from diffusers import ControlNetModel
 from annotator.hed import SOFT_HEDdetector          # contour detector shipped with StyleShot
 from ip_adapter import StyleShot, StyleContentStableDiffusionControlNetPipeline
 
-BASE = "/mnt/local/baselines/models/stable-diffusion-v1-5"
+BASE = "models/stable-diffusion-v1-5"
 CLIP_H = "laion/CLIP-ViT-H-14-laion2B-s32B-b79K"
-SS = "/mnt/local/baselines/models/StyleShot"
-CONTOUR_CN = "/mnt/local/baselines/models/StyleShot_lineart"  # HED/lineart ControlNet weights
+SS = "models/StyleShot"
+CONTOUR_CN = "models/StyleShot_lineart"  # HED/lineart ControlNet weights
 
 CWD = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948"
 STY_DIR = f"{CWD}/sty"

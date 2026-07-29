@@ -22,7 +22,7 @@ from mypipeline import AttDistPipeline
 from utils import *
 import torch
 
-model_name = "/mnt/local/cache/huggingface/FLUX.1-dev"
+model_name = "models/FLUX.1-dev"
 lr = 0.01
 iters = 2
 seed = args.seed
@@ -97,9 +97,9 @@ controller = Controller(self_layers=(start_layer, end_layer))
 import torch.nn.functional as F
 _CSD_W = float(os.environ.get("CSD_W", "0.0"))
 if _CSD_W > 0:
-    sys.path.insert(0, "/home/ubuntu/chengyanli/items/CSD_Score")
+    sys.path.insert(0, "../../CSD_Score")
     from model import CSD_CLIP, convert_state_dict
-    _csd_dir = "/home/ubuntu/chengyanli/items/CSD_Score"
+    _csd_dir = "../../CSD_Score"
     _csd = CSD_CLIP("vit_large", "default", model_path=f"{_csd_dir}/models/ViT-L-14.pt")
     _ck = torch.load(f"{_csd_dir}/models/checkpoint.pth", map_location="cpu", weights_only=False)
     _csd.load_state_dict(convert_state_dict(_ck["model_state_dict"]), strict=False)

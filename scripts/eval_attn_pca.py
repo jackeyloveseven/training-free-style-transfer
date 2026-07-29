@@ -28,8 +28,8 @@ from sklearn.decomposition import PCA
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "0")
 os.environ.setdefault("DIFFSYNTH_ATTENTION_IMPLEMENTATION", "torch")
 
-DIFFSYNTH_ROOT = "/mnt/local/yzh/prog/DiffSynth-Studio"
-KLEIN9B_ROOT = "/mnt/local/klein9b"
+DIFFSYNTH_ROOT = "third_party/DiffSynth-Studio"
+KLEIN9B_ROOT = "models/klein9b"
 CWD = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948"
 RESULTS_DIR = Path(CWD) / "results"
 RESULTS_DIR.mkdir(exist_ok=True)

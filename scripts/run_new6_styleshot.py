@@ -7,13 +7,13 @@ import torch
 from diffusers import StableDiffusionPipeline
 from PIL import Image
 
-SS_DIR = "/mnt/local/baselines/StyleShot"
+SS_DIR = "models/StyleShot"
 sys.path.insert(0, SS_DIR)
 from ip_adapter import StyleShot
 
-BASE = "/mnt/local/baselines/models/stable-diffusion-v1-5"
+BASE = "models/stable-diffusion-v1-5"
 CLIP_H = "laion/CLIP-ViT-H-14-laion2B-s32B-b79K"
-SS = "/mnt/local/baselines/models/StyleShot"
+SS = "models/StyleShot"
 STY_DIR = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948/sty"
 OUT_DIR = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948/d_grand/ext_styleshot"
 

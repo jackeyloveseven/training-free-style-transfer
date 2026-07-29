@@ -34,7 +34,7 @@ env.update({
     "PYTHONPATH": str(XFLUX_DIR) + os.pathsep + os.environ.get("PYTHONPATH", ""),
 })
 
-ip_path = Path("/mnt/local/huggingface_cache/hub/models--XLabs-AI--flux-ip-adapter/snapshots/18f6940238ab5dc3744df7a8e30315892279d5f9/ip_adapter.safetensors")
+ip_path = Path("models/flux-ip-adapter/ip_adapter.safetensors")
 n = 0
 for sid in STYLES:
     style_path = ROOT / "sty" / f"{sid}.png"

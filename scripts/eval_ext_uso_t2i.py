@@ -34,10 +34,10 @@ PROMPTS = {
 }
 
 # ============== CSD + CLIP metrics (copied from eval_all.py) ==============
-sys.path.insert(0, '/home/ubuntu/chengyanli/items/CSD_Score')
+sys.path.insert(0, '../../CSD_Score')
 from model import CSD_CLIP, convert_state_dict
 
-csd_dir = '/home/ubuntu/chengyanli/items/CSD_Score'
+csd_dir = '../../CSD_Score'
 csd_model = CSD_CLIP('vit_large', 'default', model_path=f'{csd_dir}/models/ViT-L-14.pt')
 ck = torch.load(f'{csd_dir}/models/checkpoint.pth', map_location='cpu', weights_only=False)
 csd_model.load_state_dict(convert_state_dict(ck['model_state_dict']), strict=False)

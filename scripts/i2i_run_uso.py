@@ -42,8 +42,8 @@ STYLES = ["00", "10", "14", "20", "27", "28", "33", "38"]
 CNTS = ["00", "04", "08", "12", "17"]
 
 # USO adapter weights -- UPDATE these to wherever you restore them.
-USO_LORA = "/mnt/local/baselines/USO/uso_flux_v1.0/dit_lora.safetensors"
-USO_PROJ = "/mnt/local/baselines/USO/uso_flux_v1.0/projector.safetensors"
+USO_LORA = "models/USO/uso_flux_v1.0/dit_lora.safetensors"
+USO_PROJ = "models/USO/uso_flux_v1.0/projector.safetensors"
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 

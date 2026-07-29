@@ -14,8 +14,8 @@ from einops import rearrange
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["DIFFSYNTH_ATTENTION_IMPLEMENTATION"] = "torch"
 
-DIFFSYNTH_ROOT = "/mnt/local/yzh/prog/DiffSynth-Studio"
-KLEIN9B_ROOT = "/mnt/local/klein9b"
+DIFFSYNTH_ROOT = "third_party/DiffSynth-Studio"
+KLEIN9B_ROOT = "models/klein9b"
 if DIFFSYNTH_ROOT not in sys.path:
     sys.path.insert(0, DIFFSYNTH_ROOT)
 

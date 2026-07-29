@@ -8,11 +8,11 @@ The content image is image[0] (structure to preserve); the style image is image[
 (visual style reference). This keeps content while transferring style.
 
 Weights (local, verified):
-  /mnt/local/yzh/models/Qwen-Image-Edit-2511
+  models/Qwen-Image-Edit-2511
 diffusers in /home/ubuntu/chengyanli/flux/bin/python3 has QwenImageEditPlusPipeline.
 
 Optional speed-up: the Lightning transformer
-  /mnt/local/yzh/models/Qwen-Image-Edit-2511-Lightning/Qwen-Image-Edit-2511-Lightning-8steps-V1.0-bf16.safetensors
+  models/Qwen-Image-Edit-2511-Lightning/Qwen-Image-Edit-2511-Lightning-8steps-V1.0-bf16.safetensors
 can replace the transformer for 8-step inference (set USE_LIGHTNING=1). Default uses the
 base model at 40 steps for a faithful (non-distilled) baseline.
 
@@ -22,13 +22,13 @@ Output: d_grand/i2i_ext_qwen_edit/qwen_edit_cnt{CC}_sty{SS}.png  (512x512)
 Run: /home/ubuntu/chengyanli/flux/bin/python3 scripts/i2i_run_qwen_edit.py
 """
 import os
-os.environ.setdefault("HF_HOME", "/mnt/local/huggingface_cache")
+os.environ.setdefault("HF_HOME", "models/.cache/huggingface")
 import torch
 from PIL import Image
 from diffusers import QwenImageEditPlusPipeline
 
 CWD = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948"
-MODEL = "/mnt/local/yzh/models/Qwen-Image-Edit-2511"
+MODEL = "models/Qwen-Image-Edit-2511"
 STY_DIR = f"{CWD}/sty"
 CNT_DIR = f"{CWD}/cnt"
 OUT_DIR = f"{CWD}/d_grand/i2i_ext_qwen_edit"

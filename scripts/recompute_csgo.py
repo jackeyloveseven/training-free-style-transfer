@@ -6,9 +6,9 @@ import torch, torch.nn.functional as F, numpy as np
 from PIL import Image
 import open_clip
 ROOT=Path("/home/ubuntu/chengyanli/items/save/attention_20260426_090948")
-sys.path.insert(0,'/home/ubuntu/chengyanli/items/CSD_Score')
+sys.path.insert(0,'../../CSD_Score')
 from model import CSD_CLIP, convert_state_dict
-CSD_DIR='/home/ubuntu/chengyanli/items/CSD_Score'
+CSD_DIR='../../CSD_Score'
 csd=CSD_CLIP('vit_large','default',model_path=f'{CSD_DIR}/models/ViT-L-14.pt')
 ck=torch.load(f'{CSD_DIR}/models/checkpoint.pth',map_location='cpu',weights_only=False)
 csd.load_state_dict(convert_state_dict(ck['model_state_dict']),strict=False); csd=csd.to('cuda').eval()

@@ -1,0 +1,18 @@
+torch>=2.8
+torchvision>=0.23
+diffusers @ git+https://github.com/huggingface/diffusers.git
+transformers>=4.57,<5
+accelerate>=1.10
+safetensors>=0.6
+einops>=0.8
+numpy>=2.0
+Pillow>=11
+scipy>=1.15
+scikit-learn>=1.6
+matplotlib>=3.9
+tqdm>=4.66
+timm>=0.9
+open-clip-torch>=2.32
+lpips>=0.1.4
+pytorch-fid>=0.3
+huggingface-hub[cli]>=0.34

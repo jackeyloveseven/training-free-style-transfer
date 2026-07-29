@@ -1,6 +1,6 @@
 """CSGO (bug-fixed) on new 6 diverse styles (01,07,09,22,23,31) × 5 prompts.
 Bug: content_scale/controlnet_conditioning_scale were swapped; fix is already applied
-to /mnt/local/baselines/CSGO/infer/run_baseline.py.
+to models/CSGO-code/infer/run_baseline.py.
 Output: d_grand/ext_csgo/{sid}_p{N}.png
 """
 import os, sys
@@ -8,7 +8,7 @@ import numpy as np
 import torch
 from PIL import Image
 
-REPO = "/mnt/local/baselines/CSGO"
+REPO = "models/CSGO-code"
 sys.path.insert(0, REPO)
 from ip_adapter.utils import BLOCKS, controlnet_BLOCKS
 from diffusers import AutoencoderKL, ControlNetModel, StableDiffusionXLControlNetPipeline

@@ -13,7 +13,7 @@ import open_clip
 
 ROOT = Path("/home/ubuntu/chengyanli/items/save/attention_20260426_090948")
 RESULTS_DIR = ROOT / "results"
-CSD_DIR = "/home/ubuntu/chengyanli/items/CSD_Score"
+CSD_DIR = "../../CSD_Score"
 sys.path.insert(0, CSD_DIR)
 from model import CSD_CLIP, convert_state_dict
 

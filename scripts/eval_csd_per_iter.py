@@ -21,11 +21,11 @@ from einops import rearrange
 os.environ.setdefault("CUDA_VISIBLE_DEVICES", "0")
 os.environ.setdefault("DIFFSYNTH_ATTENTION_IMPLEMENTATION", "torch")
 
-DIFFSYNTH_ROOT = "/mnt/local/yzh/prog/DiffSynth-Studio"
-KLEIN9B_ROOT = "/mnt/local/klein9b"
+DIFFSYNTH_ROOT = "third_party/DiffSynth-Studio"
+KLEIN9B_ROOT = "models/klein9b"
 CWD = "/home/ubuntu/chengyanli/items/save/attention_20260426_090948"
 RESULTS_DIR = Path(CWD) / "results"
-CSD_MODEL_PATH = "/home/ubuntu/chengyanli/items/CSD_Score"
+CSD_MODEL_PATH = "../../CSD_Score"
 
 def _install_modelscope_stub():
     if "modelscope" in sys.modules:
