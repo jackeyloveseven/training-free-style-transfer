@@ -1,0 +1,20 @@
+% Generated from measured_results_audit.json after structural and arithmetic validation.
+% Independent H100 reproduction; historical published baseline identity remains unverified.
+\begin{table}[t]
+\centering
+\small
+\caption{Hyperion denoising-step sweep on one H100 GPU. Each quality mean uses the same 40 pairs (8 styles $\times$ 5 prompts), seed 43. Active steps satisfy $t<850$. Time is the median of five generations with cached text embeddings on one fixed pair (kp0, style 27), following three warmup runs. Style-image VAE encoding, denoising with optimization, and final VAE decoding are included; model startup, uncached text encoding, image saving, and metric evaluation are excluded.}
+\begin{tabular}{rrrrrr}
+\toprule
+$T$ & $N$ & Active steps & CSD $\uparrow$ & CLIP-T $\uparrow$ & Time (s) $\downarrow$ \\
+\midrule
+25 & 2 & 11 & 0.6820 & 0.2737 & 6.1 \\
+15 & 2 & 6 & 0.5114 & 0.2990 & 3.4 \\
+20 & 2 & 9 & 0.6530 & 0.2806 & 5.0 \\
+35 & 2 & 16 & 0.7241 & 0.2545 & 8.7 \\
+4 & 2 & 1 & 0.0843 & 0.3148 & 0.7 \\
+4 & 4 & 1 & 0.0911 & 0.3146 & 1.1 \\
+8 & 2 & 3 & 0.2563 & 0.3145 & 1.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
