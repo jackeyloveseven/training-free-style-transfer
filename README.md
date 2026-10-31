@@ -6,6 +6,18 @@ MM-DiT 上的 **training-free 风格迁移**：冻结主干，在去噪过程中
 - **数字真源（任何指标以此为准）→ `items/sec/results/CANONICAL.md`**
 - 论文每张图/表的端到端溯源 → `items/sec/provenance/`（manifest + 44 dossier + GAPS）
 
+## Table 8 补实验档案（H100，2026-10-31）
+
+已完成六组新增步数配置与 T25/N2 对照，每组 40 对、seed 43，共 280 张原始图。
+
+- [完整 ZIP 档案](https://github.com/DC-Z-lab/training-free-style-transfer/releases/download/table8-h100-20261031-full/hyperion_table8_h100_complete_20261031.zip)：含代码和论文快照、280 张原图、逐样本指标、计时原数、配置、依赖、日志及更新稿件。
+- [实验结果与复现说明](docs/table8-h100-20261031/README.md)
+- [完整精度 CSV](docs/table8-h100-20261031/measured_results.csv) · [Table 8 TeX](docs/table8-h100-20261031/table8_h100.tex)
+
+压缩包 SHA256：`00861ea9ee4a421471b09075ca75c1e5482edd415e268581cab9aa161d0b7b20`。
+
+模型权重约 38.7 GB 及虚拟环境实体未入包，下载来源、版本和哈希随包保存。此次 40 对消融子集包含 sty14；其样本列表以包内记录为准。原 `t<850` 阈值下 T4 只有 1 个有效优化步，N=4 未恢复 T25 的风格水平。
+
 ## 安装环境与下载模型
 
 建议使用 Python 3.11/3.12。先安装与本机 CUDA 匹配的 PyTorch，再安装依赖和

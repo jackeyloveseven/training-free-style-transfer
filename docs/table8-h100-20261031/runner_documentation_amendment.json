@@ -1,0 +1,10 @@
+{
+  "executed_wrapper": "/Users/junchuanzhang/Documents/ChatGPT/个人2/output/hyperion_table8_audit_20261031/run_table8.executed_20261031.py",
+  "executed_sha256": "01bf27426a7ea987f4b53f7045429666e128b09bdc7eaf9512b2497c52fc4165",
+  "corrected_future_wrapper": "/Users/junchuanzhang/Documents/ChatGPT/个人2/output/hyperion_table8_audit_20261031/run_table8.py",
+  "corrected_sha256": "140fa4c648b24f032e2616c0d2f59d74eaaa2e3b61f26ab0eea365bbfbd8a295",
+  "scope": "Only one descriptive timing-definition string changed after the completed GPU run; original executed wrapper archived and original run receipts preserved. No generation, metric, schedule, timing-call or aggregation code changed.",
+  "old_timing_description": "same adapted eval_all.generate_t2i; synchronized; prompt/style encoding, denoising, optimization and VAE decode included; saving and metrics excluded; 3 warmup and 5 timed runs per config on kp0/sty27",
+  "audited_timing_description": "same adapted eval_all.generate_t2i; synchronized warmed generation with cached text embeddings; includes style-image VAE encoding, denoising, Adam optimization and final VAE decoding; excludes model startup, uncached text encoding, image saving and metric evaluation; 3 warmup and 5 timed runs per config on kp0/sty27",
+  "raw_run_receipts_changed": false
+}
